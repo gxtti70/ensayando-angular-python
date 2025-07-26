@@ -1,0 +1,10 @@
+<div class="container">
+  <h1>{{title}}</h1>
+  <p>Bienvenido a tu integración Angular + Python.</p>
+  <button (click)="cargarDatos()">Cargar datos</button>
+  <div *ngIf="loading">Cargando datos...</div>
+  <div *ngIf="error">{{error}}</div>
+  <div *ngIf="datos">
+    <pre>{{ datos | json }}</pre>
+  </div>
+</div>
