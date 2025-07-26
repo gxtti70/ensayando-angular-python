@@ -14,7 +14,7 @@ streamlit run python/dashboard.py
 4.Por si no funciona el tercer punto usar este
 python -m streamlit run python/dashboard.py
 
-#Important
+#IMPORTANT
 Los documentos de excel deben de estar estandarizados con lo siguiente:
 -Para promedio de edad usar: nombre y edad 
 -Para promedio de goles y asistencias: nombre,goles y asistencias 
