@@ -1,10 +1,210 @@
+<style>
+  .container {
+    margin: 40px auto;
+    max-width: 700px;
+    padding: 2rem;
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    border-radius: 18px;
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.2);
+    text-align: center;
+  }
+  .modern-input {
+    display: inline-block;
+    padding: 0.7rem 1rem;
+    border: 2px solid #1976d2;
+    border-radius: 8px;
+    background: #f5f7fa;
+    font-size: 1rem;
+    margin-bottom: 1rem;
+    transition: border-color 0.2s;
+    outline: none;
+  }
+  .modern-input:focus {
+    border-color: #64b5f6;
+  }
+  .modern-btn {
+    display: inline-block;
+    padding: 0.7rem 2rem;
+    background: linear-gradient(90deg, #1976d2 0%, #64b5f6 100%);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(25, 118, 210, 0.15);
+    margin-bottom: 1.5rem;
+    transition: background 0.2s, transform 0.2s;
+  }
+  .modern-btn:hover {
+    background: linear-gradient(90deg, #1565c0 0%, #1976d2 100%);
+    transform: translateY(-2px) scale(1.03);
+  }
+  h1 {
+    color: #1976d2;
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    letter-spacing: 1px;
+  }
+  p {
+    color: #333;
+    font-size: 1.2rem;
+    margin-bottom: 2rem;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #fff;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+  }
+  thead {
+    background: linear-gradient(90deg, #1976d2 0%, #64b5f6 100%);
+    color: #fff;
+  }
+  th, td {
+    padding: 1rem;
+    font-size: 1.1rem;
+    text-align: center;
+  }
+  th {
+    font-weight: 600;
+    letter-spacing: 0.5px;
+  }
+  tbody tr {
+    border-bottom: 1px solid #e0e0e0;
+    transition: background 0.2s;
+  }
+  tbody tr:hover {
+    background: #e3f2fd;
+  }
+  td {
+    color: #444;
+  }
+  @media (max-width: 600px) {
+    .container {
+      padding: 1rem;
+      max-width: 98vw;
+    }
+    table, thead, tbody, th, td, tr {
+      display: block;
+      width: 100%;
+    }
+    th, td {
+      padding: 0.7rem;
+      font-size: 1rem;
+    }
+    th {
+      background: #1976d2;
+      color: #fff;
+    }
+  }
+</style>
 <div class="container">
-  <h1>{{title}}</h1>
-  <p>Bienvenido a tu integración Angular + Python.</p>
-  <button (click)="cargarDatos()">Cargar datos</button>
-  <div *ngIf="loading">Cargando datos...</div>
-  <div *ngIf="error">{{error}}</div>
-  <div *ngIf="datos">
-    <pre>{{ datos | json }}</pre>
-  </div>
+  <h1>Angular + Python</h1>
+  <p>Bienvenido a tu integración.</p>
+  <input type="file" id="excelInput" accept=".xlsx,.xls" class="modern-input" />
+  <button class="modern-btn" onclick="importarExcel()">Importar Excel y calcular promedio</button>
+  <button class="modern-btn" onclick="exportarExcel()">Exportar datos y promedio a Excel</button>
+  <div id="resultado" style="margin: 1.5rem 0; font-size: 1.2rem; color: #1976d2;"></div>
+  <button class="modern-btn" style="margin-bottom:2rem;" onclick="location.href='index.html'">Volver al índice</button>
+  <table id="tablaDatos">
+    <thead>
+      <tr>
+        <th>Nombre</th>
+        <th>Edad</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Ana</td>
+        <td>23</td>
+      </tr>
+      <tr>
+        <td>Luis</td>
+        <td>34</td>
+      </tr>
+      <tr>
+        <td>Carlos</td>
+        <td>29</td>
+      </tr>
+    </tbody>
+  </table>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script>
+function importarExcel() {
+  const input = document.getElementById('excelInput');
+  if (!input.files.length) {
+    alert('Selecciona un archivo Excel primero.');
+    return;
+  }
+  const file = input.files[0];
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    const data = new Uint8Array(e.target.result);
+    const workbook = XLSX.read(data, {type: 'array'});
+    const sheet = workbook.Sheets[workbook.SheetNames[0]];
+    const json = XLSX.utils.sheet_to_json(sheet);
+    mostrarDatos(json);
+  };
+  reader.readAsArrayBuffer(file);
+}
+
+let datosGlobal = [];
+let promedioGlobal = 'N/A';
+
+function mostrarDatos(datos) {
+  datosGlobal = datos;
+  const tbody = document.querySelector('#tablaDatos tbody');
+  tbody.innerHTML = '';
+  let suma = 0;
+  let count = 0;
+  // Detectar el nombre correcto de la columna de edad
+  let edadKey = null;
+  if (datos.length > 0) {
+    const keys = Object.keys(datos[0]);
+    edadKey = keys.find(k => k.toLowerCase().includes('edad'));
+  }
+  datos.forEach(row => {
+    const nombre = row.Nombre || row.nombre || '';
+    const edad = edadKey ? row[edadKey] : '';
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td>${nombre}</td><td>${edad !== undefined ? edad : ''}</td>`;
+    tbody.appendChild(tr);
+    if (edad !== undefined && edad !== '') {
+      suma += Number(edad);
+      count++;
+    }
+  });
+  promedioGlobal = count ? (suma / count).toFixed(2) : 'N/A';
+  document.getElementById('resultado').textContent = `Promedio de edad: ${promedioGlobal}`;
+}
+
+function exportarExcel() {
+  if (!datosGlobal.length) {
+    alert('No hay datos para exportar.');
+    return;
+  }
+  // Detectar el nombre correcto de la columna de edad
+  let edadKey = null;
+  if (datosGlobal.length > 0) {
+    const keys = Object.keys(datosGlobal[0]);
+    edadKey = keys.find(k => k.toLowerCase().includes('edad'));
+  }
+  // Preparar datos para exportar
+  const exportData = datosGlobal.map(row => ({
+    Nombre: row.Nombre || row.nombre || '',
+    Edad: edadKey ? row[edadKey] : ''
+  }));
+  // Agregar fila de promedio
+  exportData.push({ Nombre: 'Promedio de edad', Edad: promedioGlobal });
+  const ws = XLSX.utils.json_to_sheet(exportData);
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'Datos');
+  XLSX.writeFile(wb, 'datos_con_promedio.xlsx');
+}
+</script>
