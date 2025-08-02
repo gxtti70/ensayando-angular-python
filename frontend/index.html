@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Índice - Angular + Python</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      min-height: 100vh;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .menu {
+      background: #fff;
+      border-radius: 18px;
+      box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.2);
+      padding: 2rem 3rem;
+      text-align: center;
+    }
+    h1 {
+      color: #1976d2;
+      font-size: 2.2rem;
+      margin-bottom: 2rem;
+    }
+    .menu-btn {
+      display: block;
+      width: 100%;
+      margin: 1rem 0;
+      padding: 1rem;
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #fff;
+      background: linear-gradient(90deg, #1976d2 0%, #64b5f6 100%);
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.2s;
+    }
+    .menu-btn:hover {
+      background: linear-gradient(90deg, #1565c0 0%, #1976d2 100%);
+      transform: translateY(-2px) scale(1.03);
+    }
+  </style>
+</head>
+<body>
+  <div class="menu">
+    <h1>Índice</h1>
+    <button class="menu-btn" onclick="location.href='app.component.html'">Importar Excel y calcular promedio de edad</button>
+    <button class="menu-btn" onclick="location.href='futbol.html'">Promedio de goles y asistencias de futbolistas</button>
+    <button class="menu-btn" onclick="location.href='inventario.component.html'">🏪 Sistema de Gestión de Inventario</button>
+  </div>
+</body>
+</html>

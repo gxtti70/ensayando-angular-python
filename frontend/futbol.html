@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Promedio de Goles y Asistencias</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      min-height: 100vh;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .container {
+      background: #fff;
+      border-radius: 18px;
+      box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.2);
+      padding: 2rem 3rem;
+      text-align: center;
+      max-width: 700px;
+      width: 100%;
+    }
+    h1 {
+      color: #1976d2;
+      font-size: 2rem;
+      margin-bottom: 1.5rem;
+    }
+    .modern-input {
+      display: inline-block;
+      padding: 0.7rem 1rem;
+      border: 2px solid #1976d2;
+      border-radius: 8px;
+      background: #f5f7fa;
+      font-size: 1rem;
+      margin-bottom: 1rem;
+      transition: border-color 0.2s;
+      outline: none;
+    }
+    .modern-input:focus {
+      border-color: #64b5f6;
+    }
+    .modern-btn {
+      display: inline-block;
+      padding: 0.7rem 2rem;
+      background: linear-gradient(90deg, #1976d2 0%, #64b5f6 100%);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(25, 118, 210, 0.15);
+      margin-bottom: 1.5rem;
+      transition: background 0.2s, transform 0.2s;
+    }
+    .modern-btn:hover {
+      background: linear-gradient(90deg, #1565c0 0%, #1976d2 100%);
+      transform: translateY(-2px) scale(1.03);
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #fff;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+      margin-bottom: 1.5rem;
+    }
+    th, td {
+      padding: 1rem;
+      font-size: 1.1rem;
+      text-align: center;
+    }
+    th {
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+    tbody tr {
+      border-bottom: 1px solid #e0e0e0;
+      transition: background 0.2s;
+    }
+    tbody tr:hover {
+      background: #e3f2fd;
+    }
+    td {
+      color: #444;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Promedio de Goles y Asistencias</h1>
+    <input type="file" id="excelInputFutbol" accept=".xlsx,.xls" class="modern-input" />
+    <button class="modern-btn" onclick="importarExcelFutbol()">Importar Excel y calcular promedios</button>
+    <div id="resultadoFutbol" style="margin: 1.5rem 0; font-size: 1.2rem; color: #1976d2;"></div>
+    <button class="modern-btn" style="margin-bottom:2rem;" onclick="location.href='index.html'">Volver al índice</button>
+    <table id="tablaFutbol">
+      <thead>
+        <tr>
+          <th>Jugador</th>
+          <th>Goles</th>
+          <th>Asistencias</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Ejemplo</td>
+          <td>10</td>
+          <td>5</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <script>
+    function importarExcelFutbol() {
+      const input = document.getElementById('excelInputFutbol');
+      if (!input.files.length) {
+        alert('Selecciona un archivo Excel primero.');
+        return;
+      }
+      const file = input.files[0];
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const data = new Uint8Array(e.target.result);
+        const workbook = XLSX.read(data, {type: 'array'});
+        const sheet = workbook.Sheets[workbook.SheetNames[0]];
+        const json = XLSX.utils.sheet_to_json(sheet);
+        mostrarDatosFutbol(json);
+      };
+      reader.readAsArrayBuffer(file);
+    }
+
+    function mostrarDatosFutbol(datos) {
+      const tbody = document.querySelector('#tablaFutbol tbody');
+      tbody.innerHTML = '';
+      let sumaGoles = 0;
+      let sumaAsist = 0;
+      let count = 0;
+      // Detectar nombres de columnas
+      let golesKey = null;
+      let asistKey = null;
+      if (datos.length > 0) {
+        const keys = Object.keys(datos[0]);
+        golesKey = keys.find(k => k.toLowerCase().includes('gole'));
+        asistKey = keys.find(k => k.toLowerCase().includes('asist'));
+      }
+      datos.forEach(row => {
+        const jugador = row.Jugador || row.jugador || '';
+        const goles = golesKey ? row[golesKey] : '';
+        const asist = asistKey ? row[asistKey] : '';
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td>${jugador}</td><td>${goles !== undefined ? goles : ''}</td><td>${asist !== undefined ? asist : ''}</td>`;
+        tbody.appendChild(tr);
+        if (goles !== undefined && goles !== '') {
+          sumaGoles += Number(goles);
+        }
+        if (asist !== undefined && asist !== '') {
+          sumaAsist += Number(asist);
+        }
+        if (jugador) count++;
+      });
+      let promGoles = count ? (sumaGoles / count).toFixed(2) : 'N/A';
+      let promAsist = count ? (sumaAsist / count).toFixed(2) : 'N/A';
+      document.getElementById('resultadoFutbol').textContent = `Promedio de goles: ${promGoles} | Promedio de asistencias: ${promAsist}`;
+    }
+  </script>
+</body>
+</html>

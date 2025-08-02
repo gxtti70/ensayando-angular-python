@@ -1,0 +1,818 @@
+<div class="inventario-container">
+  <style>
+    .inventario-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      min-height: 100vh;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .header h1 {
+      color: #1976d2;
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      text-shadow: 0 2px 4px rgba(25, 118, 210, 0.1);
+    }
+
+    .header p {
+      color: #666;
+      font-size: 1.1rem;
+      margin: 0;
+    }
+
+    .nav-tabs {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+    }
+
+    .nav-tab {
+      padding: 0.8rem 1.5rem;
+      background: #fff;
+      border: 2px solid #e0e0e0;
+      border-radius: 12px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .nav-tab:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      border-color: #1976d2;
+    }
+
+    .nav-tab.active {
+      background: linear-gradient(90deg, #1976d2 0%, #64b5f6 100%);
+      color: #fff;
+      border-color: #1976d2;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 3rem;
+    }
+
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #1976d2;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 1rem;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .loading p {
+      color: #666;
+      font-size: 1.1rem;
+    }
+
+    .error-message {
+      background: #ffebee;
+      border: 1px solid #f44336;
+      border-radius: 8px;
+      padding: 1rem;
+      margin-bottom: 2rem;
+      text-align: center;
+    }
+
+    .error-message p {
+      color: #d32f2f;
+      margin: 0 0 1rem 0;
+    }
+
+    .retry-btn {
+      background: #f44336;
+      color: #fff;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    .retry-btn:hover {
+      background: #d32f2f;
+    }
+
+    .filtros {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+    }
+
+    .filtro-grupo {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .filtro-grupo label {
+      font-weight: 600;
+      color: #333;
+      font-size: 0.9rem;
+    }
+
+    .filtro-select {
+      padding: 0.5rem;
+      border: 2px solid #e0e0e0;
+      border-radius: 6px;
+      font-size: 1rem;
+      background: #fff;
+    }
+
+    .filtro-select:focus {
+      outline: none;
+      border-color: #1976d2;
+    }
+
+    .form-section {
+      background: #fff;
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    .form-section h3 {
+      color: #1976d2;
+      margin-bottom: 1.5rem;
+      font-size: 1.3rem;
+      font-weight: 600;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .form-group label {
+      font-weight: 600;
+      color: #333;
+      font-size: 0.9rem;
+    }
+
+    .form-input {
+      padding: 0.7rem;
+      border: 2px solid #e0e0e0;
+      border-radius: 6px;
+      font-size: 1rem;
+      background: #fff;
+      transition: border-color 0.3s ease;
+    }
+
+    .form-input:focus {
+      outline: none;
+      border-color: #1976d2;
+    }
+
+    .button-group {
+      display: flex;
+      gap: 1rem;
+      justify-content: flex-end;
+    }
+
+    .btn {
+      padding: 0.7rem 1.5rem;
+      font-size: 1rem;
+      font-weight: 600;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    .btn-primary {
+      background: #1976d2;
+      color: #fff;
+    }
+
+    .btn-primary:hover {
+      background: #115293;
+    }
+
+    .btn-secondary {
+      background: #e0e0e0;
+      color: #333;
+    }
+
+    .btn-secondary:hover {
+      background: #bdbdbd;
+    }
+
+    /* Estilos adicionales para completar el diseño */
+    .table-section {
+      background: #fff;
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    .table-section h3 {
+      color: #1976d2;
+      margin-bottom: 1.5rem;
+      font-size: 1.3rem;
+      font-weight: 600;
+    }
+
+    .table-container {
+      overflow-x: auto;
+    }
+
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #fff;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .data-table thead {
+      background: linear-gradient(90deg, #1976d2 0%, #64b5f6 100%);
+      color: #fff;
+    }
+
+    .data-table th {
+      padding: 1rem;
+      text-align: left;
+      font-weight: 600;
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .data-table tbody tr {
+      border-bottom: 1px solid #e0e0e0;
+      transition: background 0.3s ease;
+    }
+
+    .data-table tbody tr:hover {
+      background: rgba(25, 118, 210, 0.05);
+    }
+
+    .data-table tbody tr.stock-bajo {
+      background: rgba(255, 152, 0, 0.1);
+    }
+
+    .data-table tbody tr.stock-bajo:hover {
+      background: rgba(255, 152, 0, 0.15);
+    }
+
+    .data-table td {
+      padding: 1rem;
+      color: #333;
+      font-size: 0.9rem;
+    }
+
+    /* Estados de stock */
+    .estado-bajo {
+      color: #ff9800;
+      font-weight: 600;
+    }
+
+    .estado-medio {
+      color: #ff9800;
+      font-weight: 600;
+    }
+
+    .estado-normal {
+      color: #4caf50;
+      font-weight: 600;
+    }
+
+    /* Tipos de movimiento */
+    .tipo-entrada {
+      color: #4caf50;
+      font-weight: 600;
+    }
+
+    .tipo-salida {
+      color: #f44336;
+      font-weight: 600;
+    }
+
+    /* Alertas */
+    .alertas-vista h3 {
+      color: #1976d2;
+      margin-bottom: 1.5rem;
+      font-size: 1.3rem;
+      font-weight: 600;
+    }
+
+    .no-alertas {
+      background: #fff;
+      border-radius: 12px;
+      padding: 2rem;
+      text-align: center;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    .no-alertas p {
+      color: #4caf50;
+      font-size: 1.2rem;
+      font-weight: 600;
+    }
+
+    .alertas-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1rem;
+    }
+
+    .alerta-card {
+      background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%);
+      border-radius: 12px;
+      padding: 1.5rem;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      border-left: 4px solid #ff9800;
+    }
+
+    .alerta-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+
+    .alerta-header h4 {
+      color: #333;
+      margin: 0;
+      font-size: 1.1rem;
+    }
+
+    .alerta-badge {
+      background: #ff9800;
+      color: #fff;
+      padding: 0.3rem 0.8rem;
+      border-radius: 15px;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+
+    .alerta-content p {
+      margin: 0.5rem 0;
+      color: #333;
+    }
+
+    .alerta-content strong {
+      color: #1976d2;
+    }
+
+    /* Estadísticas */
+    .estadisticas-vista h3 {
+      color: #1976d2;
+      margin-bottom: 1.5rem;
+      font-size: 1.3rem;
+      font-weight: 600;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .stat-card {
+      background: linear-gradient(135deg, #fff 0%, #f8f9fa 100%);
+      border-radius: 12px;
+      padding: 1.5rem;
+      text-align: center;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    .stat-card h4 {
+      color: #666;
+      font-size: 0.9rem;
+      margin-bottom: 0.5rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .stat-number {
+      color: #1976d2;
+      font-size: 2rem;
+      font-weight: 700;
+      margin: 0;
+    }
+
+    .categorias-stats {
+      background: #fff;
+      border-radius: 12px;
+      padding: 1.5rem;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    .categorias-stats h4 {
+      color: #1976d2;
+      margin-bottom: 1.5rem;
+      font-size: 1.2rem;
+    }
+
+    .categoria-stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1rem;
+    }
+
+    .categoria-stat {
+      background: #f8f9fa;
+      padding: 1rem;
+      border-radius: 8px;
+      border-left: 4px solid #1976d2;
+    }
+
+    .categoria-stat h5 {
+      color: #1976d2;
+      margin-bottom: 0.8rem;
+      font-size: 1rem;
+    }
+
+    .categoria-details p {
+      margin: 0.3rem 0;
+      font-size: 0.9rem;
+      color: #333;
+    }
+
+    .categoria-details strong {
+      color: #1976d2;
+    }
+
+    /* Botón volver */
+    .volver-section {
+      text-align: center;
+      margin-top: 2rem;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .inventario-container {
+        padding: 1rem;
+      }
+
+      .header h1 {
+        font-size: 2rem;
+      }
+
+      .nav-tabs {
+        flex-direction: column;
+      }
+
+      .nav-tab {
+        width: 100%;
+      }
+
+      .filtros {
+        flex-direction: column;
+      }
+
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .data-table {
+        font-size: 0.8rem;
+      }
+
+      .data-table th,
+      .data-table td {
+        padding: 0.5rem;
+      }
+
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .categoria-stats-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .alertas-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+
+  <!-- AQUÍ VA TODO TU CONTENIDO HTML que ya pegaste en tu mensaje -->
+    <!-- Navegación -->
+  <div class="nav-tabs">
+    <button 
+      [class.active]="vistaActual === 'productos'"
+      (click)="cambiarVista('productos')"
+      class="nav-tab">
+      📦 Productos
+    </button>
+    <button 
+      [class.active]="vistaActual === 'movimientos'"
+      (click)="cambiarVista('movimientos')"
+      class="nav-tab">
+      📊 Movimientos
+    </button>
+    <button 
+      [class.active]="vistaActual === 'alertas'"
+      (click)="cambiarVista('alertas')"
+      class="nav-tab">
+      ⚠️ Alertas
+    </button>
+    <button 
+      [class.active]="vistaActual === 'estadisticas'"
+      (click)="cambiarVista('estadisticas')"
+      class="nav-tab">
+      📈 Estadísticas
+    </button>
+  </div>
+
+  <!-- Loading y Error -->
+  <div *ngIf="loading" class="loading">
+    <div class="spinner"></div>
+    <p>Cargando...</p>
+  </div>
+
+  <div *ngIf="error" class="error-message">
+    <p>{{ error }}</p>
+    <button (click)="cargarDatos()" class="retry-btn">Reintentar</button>
+  </div>
+
+  <!-- Vista de Productos -->
+  <div *ngIf="vistaActual === 'productos' && !loading" class="productos-vista">
+    
+    <!-- Filtros -->
+    <div class="filtros">
+      <div class="filtro-grupo">
+        <label>Categoría:</label>
+        <select [(ngModel)]="filtroCategoria" class="filtro-select">
+          <option value="0">Todas las categorías</option>
+          <option *ngFor="let cat of categorias" [value]="cat.id">
+            {{ cat.nombre }}
+          </option>
+        </select>
+      </div>
+      
+      <div class="filtro-grupo">
+        <label>Stock:</label>
+        <select [(ngModel)]="filtroStock" class="filtro-select">
+          <option value="todos">Todos</option>
+          <option value="bajo">Stock bajo</option>
+          <option value="normal">Stock normal</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Formulario Nuevo Producto -->
+    <div class="form-section">
+      <h3>➕ Agregar Nuevo Producto</h3>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Nombre:</label>
+          <input [(ngModel)]="nuevoProducto.nombre" type="text" placeholder="Nombre del producto" class="form-input">
+        </div>
+        
+        <div class="form-group">
+          <label>Categoría:</label>
+          <select [(ngModel)]="nuevoProducto.categoria_id" class="form-input">
+            <option *ngFor="let cat of categorias" [value]="cat.id">
+              {{ cat.nombre }}
+            </option>
+          </select>
+        </div>
+        
+        <div class="form-group">
+          <label>Precio:</label>
+          <input [(ngModel)]="nuevoProducto.precio" type="number" step="0.01" placeholder="0.00" class="form-input">
+        </div>
+        
+        <div class="form-group">
+          <label>Stock inicial:</label>
+          <input [(ngModel)]="nuevoProducto.stock" type="number" placeholder="0" class="form-input">
+        </div>
+        
+        <div class="form-group">
+          <label>Stock mínimo:</label>
+          <input [(ngModel)]="nuevoProducto.stock_minimo" type="number" placeholder="0" class="form-input">
+        </div>
+        
+        <div class="form-group">
+          <label>Descripción:</label>
+          <textarea [(ngModel)]="nuevoProducto.descripcion" placeholder="Descripción del producto" class="form-input"></textarea>
+        </div>
+      </div>
+      
+      <button (click)="agregarProducto()" class="btn-primary">Agregar Producto</button>
+    </div>
+
+    <!-- Formulario Ajuste de Stock -->
+    <div class="form-section">
+      <h3>📦 Ajustar Stock</h3>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Producto:</label>
+          <select [(ngModel)]="ajusteStock.producto_id" class="form-input">
+            <option value="0">Seleccionar producto</option>
+            <option *ngFor="let prod of productos" [value]="prod.id">
+              {{ prod.nombre }} (Stock: {{ prod.stock }})
+            </option>
+          </select>
+        </div>
+        
+        <div class="form-group">
+          <label>Tipo:</label>
+          <select [(ngModel)]="ajusteStock.tipo" class="form-input">
+            <option value="entrada">Entrada</option>
+            <option value="salida">Salida</option>
+          </select>
+        </div>
+        
+        <div class="form-group">
+          <label>Cantidad:</label>
+          <input [(ngModel)]="ajusteStock.cantidad" type="number" placeholder="0" class="form-input">
+        </div>
+        
+        <div class="form-group">
+          <label>Motivo:</label>
+          <input [(ngModel)]="ajusteStock.motivo" type="text" placeholder="Motivo del ajuste" class="form-input">
+        </div>
+      </div>
+      
+      <button (click)="ajustarStock()" class="btn-primary">Ajustar Stock</button>
+    </div>
+
+    <!-- Tabla de Productos -->
+    <div class="table-section">
+      <h3>📋 Lista de Productos ({{ getProductosFiltrados().length }})</h3>
+      <div class="table-container">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Nombre</th>
+              <th>Categoría</th>
+              <th>Precio</th>
+              <th>Stock</th>
+              <th>Stock Mín.</th>
+              <th>Valor Total</th>
+              <th>Estado</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let producto of getProductosFiltrados()" [class.stock-bajo]="getEstadoStock(producto) === 'bajo'">
+              <td>{{ producto.id }}</td>
+              <td>{{ producto.nombre }}</td>
+              <td>{{ producto.categoria_nombre }}</td>
+              <td>${{ producto.precio | number:'1.2-2' }}</td>
+              <td>{{ producto.stock }}</td>
+              <td>{{ producto.stock_minimo }}</td>
+              <td>${{ getValorTotal(producto) | number:'1.2-2' }}</td>
+              <td>
+                <span [class]="'estado-' + getEstadoStock(producto)">
+                  {{ getEstadoStock(producto) === 'bajo' ? '⚠️ Bajo' : 
+                     getEstadoStock(producto) === 'medio' ? '⚡ Medio' : '✅ Normal' }}
+                </span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Vista de Movimientos -->
+  <div *ngIf="vistaActual === 'movimientos' && !loading" class="movimientos-vista">
+    <h3>📊 Historial de Movimientos</h3>
+    <div class="table-container">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Producto</th>
+            <th>Tipo</th>
+            <th>Cantidad</th>
+            <th>Motivo</th>
+            <th>Fecha</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let movimiento of movimientos">
+            <td>{{ movimiento.id }}</td>
+            <td>{{ movimiento.producto_nombre }}</td>
+            <td>
+              <span [class]="'tipo-' + movimiento.tipo">
+                {{ movimiento.tipo === 'entrada' ? '📥 Entrada' : '📤 Salida' }}
+              </span>
+            </td>
+            <td>{{ movimiento.cantidad }}</td>
+            <td>{{ movimiento.motivo }}</td>
+            <td>{{ formatearFecha(movimiento.fecha) }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Vista de Alertas -->
+  <div *ngIf="vistaActual === 'alertas' && !loading" class="alertas-vista">
+    <h3>⚠️ Alertas de Stock</h3>
+    <div *ngIf="alertas.length === 0" class="no-alertas">
+      <p>✅ No hay alertas de stock bajo</p>
+    </div>
+    <div *ngIf="alertas.length > 0" class="alertas-grid">
+      <div *ngFor="let alerta of alertas" class="alerta-card">
+        <div class="alerta-header">
+          <h4>{{ alerta.producto_nombre }}</h4>
+          <span class="alerta-badge">⚠️ Stock Bajo</span>
+        </div>
+        <div class="alerta-content">
+          <p><strong>Stock actual:</strong> {{ alerta.stock_actual }}</p>
+          <p><strong>Stock mínimo:</strong> {{ alerta.stock_minimo }}</p>
+          <p><strong>Diferencia:</strong> {{ alerta.stock_actual - alerta.stock_minimo }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Vista de Estadísticas -->
+  <div *ngIf="vistaActual === 'estadisticas' && !loading && estadisticas" class="estadisticas-vista">
+    <h3>📈 Estadísticas del Inventario</h3>
+    
+    <div class="stats-grid">
+      <div class="stat-card">
+        <h4>📦 Total Productos</h4>
+        <p class="stat-number">{{ estadisticas.total_productos }}</p>
+      </div>
+      
+      <div class="stat-card">
+        <h4>🏷️ Categorías</h4>
+        <p class="stat-number">{{ estadisticas.total_categorias }}</p>
+      </div>
+      
+      <div class="stat-card">
+        <h4>💰 Valor Total</h4>
+        <p class="stat-number">${{ estadisticas.valor_total_inventario | number:'1.2-2' }}</p>
+      </div>
+      
+      <div class="stat-card">
+        <h4>⚠️ Productos Bajo Stock</h4>
+        <p class="stat-number">{{ estadisticas.productos_bajo_stock }}</p>
+      </div>
+    </div>
+
+    <div class="categorias-stats">
+      <h4>📊 Estadísticas por Categoría</h4>
+      <div class="categoria-stats-grid">
+        <div *ngFor="let categoria of estadisticas.stats_por_categoria | keyvalue" class="categoria-stat">
+          <h5>{{ categoria.key }}</h5>
+          <div class="categoria-details">
+            <p><strong>Productos:</strong> {{ categoria.value.cantidad_productos }}</p>
+            <p><strong>Stock total:</strong> {{ categoria.value.stock_total }}</p>
+            <p><strong>Valor:</strong> ${{ categoria.value.valor_total | number:'1.2-2' }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Botón Volver -->
+  <div class="volver-section">
+    <button (click)="location.href='index.html'" class="btn-secondary">
+      ← Volver al Índice
+    </button>
+  </div>
+</div> 
+
+
+</div>
+ 

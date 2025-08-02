@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=500, initial-scale=1.0">
+  <title>Encuesta de Emprendimiento</title>
+  <style>
+    body {
+      background: linear-gradient(120deg, #e0e7ff 0%, #f9fafb 100%);
+      font-family: 'Segoe UI', 'Roboto', Arial, sans-serif;
+      margin: 0;
+      min-height: 100vh;
+    }
+    .emprendimiento-container {
+      max-width: 480px;
+      margin: 3rem auto;
+      padding: 2.5rem 2rem 2rem 2rem;
+      background: #fff;
+      border-radius: 18px;
+      box-shadow: 0 6px 32px rgba(25, 118, 210, 0.10), 0 1.5px 4px rgba(0,0,0,0.04);
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+    h2 {
+      text-align: center;
+      color: #1976d2;
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+      letter-spacing: 1px;
+    }
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 1.2rem;
+    }
+    .pregunta {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      background: #f3f6fb;
+      border-radius: 8px;
+      padding: 1rem 1rem 0.7rem 1rem;
+      box-shadow: 0 1px 2px rgba(25, 118, 210, 0.03);
+    }
+    .pregunta label {
+      font-weight: 500;
+      color: #333;
+      font-size: 1.08rem;
+    }
+    select {
+      padding: 0.6rem 0.8rem;
+      border-radius: 6px;
+      border: 1px solid #b6c3d1;
+      font-size: 1rem;
+      background: #fff;
+      transition: border 0.2s;
+    }
+    select:focus {
+      border: 1.5px solid #1976d2;
+      outline: none;
+    }
+    button[type="submit"], .resultado button {
+      margin-top: 1.2rem;
+      padding: 0.7rem 1.5rem;
+      background: linear-gradient(90deg, #1976d2 60%, #42a5f5 100%);
+      color: #fff;
+      border: none;
+      border-radius: 7px;
+      font-size: 1.1rem;
+      font-weight: 500;
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(25, 118, 210, 0.08);
+      transition: background 0.2s, transform 0.1s;
+    }
+    button[type="submit"]:hover, .resultado button:hover {
+      background: linear-gradient(90deg, #1565c0 60%, #1976d2 100%);
+      transform: translateY(-2px) scale(1.03);
+    }
+    .resultado {
+      margin-top: 2rem;
+      background: #e3f2fd;
+      padding: 1.5rem 1rem 1.2rem 1rem;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(25, 118, 210, 0.07);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1.1rem;
+    }
+    .resultado h3 {
+      color: #1976d2;
+      font-size: 1.4rem;
+      margin-bottom: 0.5rem;
+    }
+    .resultado ul {
+      margin: 0.5rem 0 0 0;
+      padding-left: 1.2rem;
+      color: #c62828;
+      font-size: 1.05rem;
+    }
+    .resultado p {
+      margin: 0.2rem 0 0 0;
+      color: #333;
+      font-size: 1.08rem;
+    }
+    #graficaFactores {
+      margin-top: 0.7rem;
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 1px 4px rgba(25, 118, 210, 0.06);
+      padding: 0.5rem;
+    }
+    @media (max-width: 600px) {
+      .emprendimiento-container {
+        padding: 1rem 0.3rem;
+      }
+      #graficaFactores {
+        width: 100% !important;
+        height: 180px !important;
+      }
+    }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <div class="emprendimiento-container">
+    <h2>Encuesta de Emprendimiento</h2>
+    <form id="formEmprendimiento">
+      <div class="pregunta">
+        <label>¿Tienes experiencia previa en emprendimientos?</label>
+        <select required name="exp">
+          <option value="" disabled selected>Selecciona una opción</option>
+          <option value="Sí">Sí</option>
+          <option value="No">No</option>
+        </select>
+      </div>
+      <div class="pregunta">
+        <label>¿Cuentas con capital inicial?</label>
+        <select required name="capital">
+          <option value="" disabled selected>Selecciona una opción</option>
+          <option value="Sí">Sí</option>
+          <option value="No">No</option>
+        </select>
+      </div>
+      <div class="pregunta">
+        <label>¿Has realizado un estudio de mercado?</label>
+        <select required name="mercado">
+          <option value="" disabled selected>Selecciona una opción</option>
+          <option value="Sí">Sí</option>
+          <option value="No">No</option>
+        </select>
+      </div>
+      <div class="pregunta">
+        <label>¿Tienes un equipo de trabajo?</label>
+        <select required name="equipo">
+          <option value="" disabled selected>Selecciona una opción</option>
+          <option value="Sí">Sí</option>
+          <option value="No">No</option>
+        </select>
+      </div>
+      <div class="pregunta">
+        <label>¿Tu producto/servicio es innovador?</label>
+        <select required name="innovacion">
+          <option value="" disabled selected>Selecciona una opción</option>
+          <option value="Sí">Sí</option>
+          <option value="No">No</option>
+        </select>
+      </div>
+      <button type="submit">Calcular Éxito</button>
+    </form>
+    <div id="resultado" class="resultado" style="display:none">
+      <h3 id="porcentaje"></h3>
+      <div id="factores"></div>
+      <canvas id="graficaFactores" width="400" height="200"></canvas>
+      <button onclick="reiniciarEncuesta()">Reiniciar Encuesta</button>
+    </div>
+  </div>
+  <script>
+    const form = document.getElementById('formEmprendimiento');
+    const resultadoDiv = document.getElementById('resultado');
+    const porcentajeH3 = document.getElementById('porcentaje');
+    const factoresDiv = document.getElementById('factores');
+    let chart = null;
+
+    form.onsubmit = function(e) {
+      e.preventDefault();
+      const formData = new FormData(form);
+      const preguntas = [
+        { texto: '¿Tienes experiencia previa en emprendimientos?', valor: formData.get('exp') },
+        { texto: '¿Cuentas con capital inicial?', valor: formData.get('capital') },
+        { texto: '¿Has realizado un estudio de mercado?', valor: formData.get('mercado') },
+        { texto: '¿Tienes un equipo de trabajo?', valor: formData.get('equipo') },
+        { texto: '¿Tu producto/servicio es innovador?', valor: formData.get('innovacion') }
+      ];
+      let puntaje = 0;
+      let razones = [];
+      preguntas.forEach(p => {
+        if (p.valor === 'Sí') {
+          puntaje += 20;
+        } else {
+          razones.push(p.texto);
+        }
+      });
+      porcentajeH3.textContent = `Probabilidad de Éxito: ${puntaje}%`;
+      if (razones.length) {
+        factoresDiv.innerHTML = `<p><strong>Factores a mejorar:</strong></p><ul>${razones.map(r => `<li>${r}</li>`).join('')}</ul>`;
+      } else {
+        factoresDiv.innerHTML = '<p>¡Felicidades! Cumples con todos los factores clave.</p>';
+      }
+      // Graficar
+      mostrarGrafica(preguntas);
+      form.style.display = 'none';
+      resultadoDiv.style.display = 'block';
+    };
+
+    function mostrarGrafica(preguntas) {
+      const ctx = document.getElementById('graficaFactores').getContext('2d');
+      const labels = preguntas.map(p => p.texto);
+      const data = preguntas.map(p => p.valor === 'Sí' ? 1 : 0);
+      if (chart) chart.destroy();
+      chart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: 'Cumplimiento',
+            data: data,
+            backgroundColor: data.map(v => v ? '#1976d2' : '#e57373')
+          }]
+        },
+        options: {
+          scales: {
+            y: {
+              beginAtZero: true,
+              max: 1,
+              ticks: {
+                stepSize: 1,
+                callback: function(value) { return value ? 'Sí' : 'No'; }
+              }
+            }
+          },
+          plugins: {
+            legend: { display: false },
+            title: { display: true, text: 'Factores de Éxito por Pregunta' }
+          }
+        }
+      });
+    }
+
+    window.reiniciarEncuesta = function() {
+      form.reset();
+      form.style.display = 'block';
+      resultadoDiv.style.display = 'none';
+      if (chart) chart.destroy();
+    };
+  </script>
+</body>
+</html> 
